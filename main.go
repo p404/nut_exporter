@@ -12,8 +12,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/log"
 )
-
-
 // Regex
 var(
 	batteryChargeRegex          =   regexp.MustCompile(`(?:battery[.]charge:(?:\s)(.*))`)
@@ -29,7 +27,6 @@ var(
 	upsLoadRegex                =   regexp.MustCompile(`(?:ups[.]load:(?:\s)(.*))`)
 	upsStatusRegex              =   regexp.MustCompile(`(?:ups[.]status:(?:\s)(.*))`)
 )
-
 // NUT Gauges
 var (
 	batteryCharge = prometheus.NewGauge(prometheus.GaugeOpts{
@@ -179,9 +176,7 @@ func recordMetrics(upscBinary string, upsArg string){
 			time.Sleep(5 * time.Second)
 		}
 	}()
-
 }
-
 
 func main() {
 	upsArg   := flag.String("ups", "none", "ups name managed by nut")
