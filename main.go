@@ -182,10 +182,9 @@ func main() {
 	upsArg   := flag.String("ups", "none", "ups name managed by nut")
 	portArg  := flag.Int("port", 8100, "port number")
 	upscArg  := flag.String("upsc", "/bin/upsc", "upsc path")
+    flag.Parse()
 
 	var listenAddr = fmt.Sprintf(":%d", *portArg)
-
-	flag.Parse()
 	recordMetrics(*upscArg, *upsArg)
     
 	log.Infoln("Starting NUT exporter on ups", *upsArg )	
