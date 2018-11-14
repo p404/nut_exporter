@@ -16,24 +16,22 @@ import (
 
 // Regex
 var(
-
 	batteryChargeRegex          =   regexp.MustCompile(`(?:battery[.]charge:(?:\s)(.*))`)
-    batteryPacksRegex           =   regexp.MustCompile(`(?:battery[.]packs:(?:\s)(.*))`)
+	batteryPacksRegex           =   regexp.MustCompile(`(?:battery[.]packs:(?:\s)(.*))`)
 	batteryVoltageRegex         =   regexp.MustCompile(`(?:battery[.]voltage:(?:\s)(.*))`)
 	batteryVoltageNominalRegex  =   regexp.MustCompile(`(?:battery[.]voltage[.]nominal:(?:\s)(.*))`)
-    inputVoltageRegex           =   regexp.MustCompile(`(?:input[.]voltage:(?:\s)(.*))`)
+	inputVoltageRegex           =   regexp.MustCompile(`(?:input[.]voltage:(?:\s)(.*))`)
 	inputVoltageNominalRegex    =   regexp.MustCompile(`(?:input[.]voltage[.]nominal:(?:\s)(.*))`)
-    outputVoltageRegex          =   regexp.MustCompile(`(?:output[.]voltage:(?:\s)(.*))`)
-    outputVoltageNominalRegex   =   regexp.MustCompile(`(?:output[.]voltage[.]nominal:(?:\s)(.*))`)
-    upsPowerNominalRegex        =   regexp.MustCompile(`(?:ups[.]power[.]nominal:(?:\s)(.*))`)
-    upsTempRegex                =   regexp.MustCompile(`(?:ups[.]temperature:(?:\s)(.*))`)
-    upsLoadRegex                =   regexp.MustCompile(`(?:ups[.]load:(?:\s)(.*))`)
+	outputVoltageRegex          =   regexp.MustCompile(`(?:output[.]voltage:(?:\s)(.*))`)
+	outputVoltageNominalRegex   =   regexp.MustCompile(`(?:output[.]voltage[.]nominal:(?:\s)(.*))`)
+	upsPowerNominalRegex        =   regexp.MustCompile(`(?:ups[.]power[.]nominal:(?:\s)(.*))`)
+	upsTempRegex                =   regexp.MustCompile(`(?:ups[.]temperature:(?:\s)(.*))`)
+	upsLoadRegex                =   regexp.MustCompile(`(?:ups[.]load:(?:\s)(.*))`)
 	upsStatusRegex              =   regexp.MustCompile(`(?:ups[.]status:(?:\s)(.*))`)
 )
 
 // NUT Gauges
 var (
-
 	batteryCharge = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "battery_charge",
 		Help: "Current battery charge (percent)",
@@ -65,12 +63,12 @@ var (
 	})
 
 	outputVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "ouput_voltage",
+		Name: "output_voltage",
 		Help: "Current output voltage",
 	})
 	
 	outputVoltageNominal = prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "ouput_voltage_nominal",
+		Name: "output_voltage_nominal",
 		Help: "Nominal output voltage",
 	})
 	
@@ -95,24 +93,23 @@ var (
 	})
 )
 
-func recordMetrics(){
-	
+func recordMetrics(upscBinary string, upsArg string){
 	prometheus.MustRegister(batteryCharge)
-    prometheus.MustRegister(batteryPacks) 
-    prometheus.MustRegister(batteryVoltage)
-    prometheus.MustRegister(batteryVoltageNominal)
-    prometheus.MustRegister(inputVoltage)
-    prometheus.MustRegister(inputVoltageNominal)
-    prometheus.MustRegister(outputVoltage)
-    prometheus.MustRegister(outputVoltageNominal)
+	prometheus.MustRegister(batteryPacks) 
+	prometheus.MustRegister(batteryVoltage)
+	prometheus.MustRegister(batteryVoltageNominal)
+	prometheus.MustRegister(inputVoltage)
+	prometheus.MustRegister(inputVoltageNominal)
+	prometheus.MustRegister(outputVoltage)
+	prometheus.MustRegister(outputVoltageNominal)
 	prometheus.MustRegister(upsPowerNominal)
-    prometheus.MustRegister(upsTemp)
-    prometheus.MustRegister(upsLoad)
-    prometheus.MustRegister(upsStatus)
+	prometheus.MustRegister(upsTemp)
+	prometheus.MustRegister(upsLoad)
+	prometheus.MustRegister(upsStatus)
 	
 	go func(){
 		for {
-			upsOutput, err := exec.Command("cat", "nut_xample").Output()
+			upsOutput, err := exec.Command(upscBinary , upsArg).Output()
 			
 			if err != nil {
 				log.Fatal(err)
@@ -127,7 +124,7 @@ func recordMetrics(){
 			batteryVoltageValue, _ := strconv.ParseFloat(batteryVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
 			batteryVoltage.Set(batteryVoltageValue)
 
-            batteryVoltageNominalValue, _ := strconv.ParseFloat(batteryVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
+			batteryVoltageNominalValue, _ := strconv.ParseFloat(batteryVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
 			batteryVoltageNominal.Set(batteryVoltageNominalValue)
 
 			inputVoltageValue, _ := strconv.ParseFloat(inputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
@@ -159,7 +156,7 @@ func recordMetrics(){
 				case "TRIM":
 					upsStatus.Set(1)
 				case "BOOST":
-                    upsStatus.Set(2)
+					upsStatus.Set(2)
 				case "OL":
 					upsStatus.Set(3)
 				case "OB":
@@ -179,7 +176,7 @@ func recordMetrics(){
 				case "DISCHRG":
 					upsStatus.Set(11)
 			}
-			time.Sleep(2 * time.Second)
+			time.Sleep(5 * time.Second)
 		}
 	}()
 
@@ -189,12 +186,12 @@ func recordMetrics(){
 func main() {
 	upsArg   := flag.String("ups", "none", "ups name managed by nut")
 	portArg  := flag.Int("port", 8100, "port number")
-	
+	upscArg  := flag.String("upsc", "/bin/upsc", "upsc path")
+
 	var listenAddr = fmt.Sprintf(":%d", *portArg)
-    //upscArg  := flag.String("upsc", "/bin/upsc", "upsc path")
 
 	flag.Parse()
-	recordMetrics()
+	recordMetrics(*upscArg, *upsArg)
     
 	log.Infoln("Starting NUT exporter on ups", *upsArg )	
 	http.Handle("/metrics", promhttp.Handler())
@@ -202,4 +199,3 @@ func main() {
 	log.Infoln("NUT exporter started on port", *portArg)
     http.ListenAndServe(listenAddr, nil)	
 }
-
