@@ -197,5 +197,5 @@ func main() {
 	http.Handle("/metrics", promhttp.Handler())
     
 	log.Infoln("NUT exporter started on port", *portArg)
-    http.ListenAndServe(listenAddr, nil)	
+	http.ListenAndServe(listenAddr, nil)	
 }
