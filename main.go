@@ -112,39 +112,83 @@ func recordMetrics(upscBinary string, upsArg string){
 				log.Fatal(err)
 			}
 			
-			batteryChargeValue, _ := strconv.ParseFloat(batteryChargeRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			batteryCharge.Set(batteryChargeValue)
-
-			batteryPacksValue, _ := strconv.ParseFloat(batteryPacksRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			batteryPacks.Set(batteryPacksValue)
-
-			batteryVoltageValue, _ := strconv.ParseFloat(batteryVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			batteryVoltage.Set(batteryVoltageValue)
-
-			batteryVoltageNominalValue, _ := strconv.ParseFloat(batteryVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			batteryVoltageNominal.Set(batteryVoltageNominalValue)
-
-			inputVoltageValue, _ := strconv.ParseFloat(inputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			inputVoltage.Set(inputVoltageValue)
-
-			inputVoltageNominalValue, _ := strconv.ParseFloat(inputVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			inputVoltageNominal.Set(inputVoltageNominalValue)
-
-			outputVoltageValue, _ := strconv.ParseFloat(outputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			outputVoltage.Set(outputVoltageValue)
-
-			outputVoltageNominalValue, _ := strconv.ParseFloat(outputVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			outputVoltageNominal.Set(outputVoltageNominalValue)
-
-			upsPowerNominalValue, _ := strconv.ParseFloat(upsPowerNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			upsPowerNominal.Set(upsPowerNominalValue)
-
-			upsTempValue, _ := strconv.ParseFloat(upsTempRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			upsTemp.Set(upsTempValue)
-
-			upsLoadValue, _ := strconv.ParseFloat(upsLoadRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
-			upsLoad.Set(upsLoadValue)
-
+			if batteryChargeRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(batteryCharge)
+			} else {
+				batteryChargeValue, _ := strconv.ParseFloat(batteryChargeRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				batteryCharge.Set(batteryChargeValue)
+			} 
+			
+			if batteryPacksRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(batteryPacks)
+			} else {
+				batteryPacksValue, _ := strconv.ParseFloat(batteryPacksRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				batteryPacks.Set(batteryPacksValue)
+			}
+		
+			if batteryVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(batteryVoltage)
+			} else {
+				batteryVoltageValue, _ := strconv.ParseFloat(batteryVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				batteryVoltage.Set(batteryVoltageValue)
+			}
+			
+			if batteryVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(batteryVoltageNominal)
+			} else {
+				batteryVoltageNominalValue, _ := strconv.ParseFloat(batteryVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				batteryVoltageNominal.Set(batteryVoltageNominalValue)
+			}
+			
+			if inputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(inputVoltage)
+			} else {
+				inputVoltageValue, _ := strconv.ParseFloat(inputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				inputVoltage.Set(inputVoltageValue)
+			}
+			
+			if inputVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(inputVoltageNominal)
+			} else {
+				inputVoltageNominalValue, _ := strconv.ParseFloat(inputVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				inputVoltageNominal.Set(inputVoltageNominalValue)
+			}
+			
+			if outputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(outputVoltage)
+			} else {
+				outputVoltageValue, _ := strconv.ParseFloat(outputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+  				outputVoltage.Set(outputVoltageValue)
+			}
+			
+			if outputVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(outputVoltageNominal)
+			} else {
+				outputVoltageNominalValue, _ := strconv.ParseFloat(outputVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				outputVoltageNominal.Set(outputVoltageNominalValue)
+			}
+			
+			if upsPowerNominalRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(upsPowerNominal)
+			} else {
+				upsPowerNominalValue, _ := strconv.ParseFloat(upsPowerNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				upsPowerNominal.Set(upsPowerNominalValue)
+			}
+			
+			if upsTempRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(upsTemp)
+			} else {
+				upsTempValue, _ := strconv.ParseFloat(upsTempRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
+				upsTemp.Set(upsTempValue)	
+			}
+			
+			if upsLoadRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(upsLoad)
+			} else {
+				upsLoadValue, _ := strconv.ParseFloat(upsLoadRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)	
+				upsLoad.Set(upsLoadValue)
+			}
+			
 			upsStatusValue := upsStatusRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1]	
 			
 			switch upsStatusValue {
