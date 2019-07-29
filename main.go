@@ -60,57 +60,67 @@ func initMetrics( upsArg string) {
 	batteryPacks = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "battery_pack",
 		Help: "Number of battery packs on the UPS",
+		ConstLabels: constLabels,
 	})
 
 	batteryVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "battery_voltage",
 		Help: "Current battery voltage",
+		ConstLabels: constLabels,
 	})
 
 	batteryVoltageNominal = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "battery_voltage_nominal",
 		Help: "Nominal battery voltage",
+		ConstLabels: constLabels,
 	})
 
 	inputVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "input_voltage",
 		Help: "Current input voltage",
-
+		ConstLabels: constLabels,
 	})
 
 	inputVoltageNominal = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "input_voltage_nominal",
 		Help: "Nominal input voltage",
+		ConstLabels: constLabels,
 	})
 
 	outputVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "output_voltage",
 		Help: "Current output voltage",
+		ConstLabels: constLabels,
 	})
 
 	outputVoltageNominal = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "output_voltage_nominal",
 		Help: "Nominal output voltage",
+		ConstLabels: constLabels,
 	})
 
 	upsPowerNominal = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "ups_power_nominal",
 		Help: "Nominal ups power",
+		ConstLabels: constLabels,
 	})
 
 	upsTemp = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "ups_temp",
 		Help: "UPS Temperature (degrees C)",
+		ConstLabels: constLabels,
 	})
 
 	upsLoad = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "ups_load",
 		Help: "Current UPS load (percent)",
+		ConstLabels: constLabels,
 	})
 
 	upsStatus = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "ups_status",
 		Help: "Current UPS Status (0=Calibration, 1=SmartTrim, 2=SmartBoost, 3=Online, 4=OnBattery, 5=Overloaded, 6=LowBattery, 7=ReplaceBattery, 8=OnBypass, 9=Off, 10=Charging, 11=Discharging)",
+		ConstLabels: constLabels,
 	})
 
 }
