@@ -8,6 +8,20 @@ go:
 env:
   - DEP_VERSION="0.5.1"
 
+matrix:
+  # It's ok if our code fails on unstable development versions of Go.
+  allow_failures:
+    - go: master
+  # Don't wait for tip tests to finish. Mark the test run green if the
+  # tests pass on the stable versions of Go.
+  fast_finish: true
+
+# Don't email me the results of the test runs.
+notifications:
+  email: false
+
 before_install:
   - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
   - chmod +x $GOPATH/bin/dep
+  - go get github.com/golang/lint/golint                        # Linter
+  - go get honnef.co/go/tools/cmd/megacheck                     # Badass static analyzer/linter
