@@ -22,6 +22,8 @@ var(
 	batteryPacksRegex           =   regexp.MustCompile(`(?:battery[.]packs:(?:\s)(.*))`)
 	batteryVoltageRegex         =   regexp.MustCompile(`(?:battery[.]voltage:(?:\s)(.*))`)
 	batteryVoltageNominalRegex  =   regexp.MustCompile(`(?:battery[.]voltage[.]nominal:(?:\s)(.*))`)
+	batteryRuntimeRegex         =   regexp.MustCompile(`(?:battery[.]runtime:(?:\s)(.*))`)
+	batteryRuntimeLowRegex      =   regexp.MustCompile(`(?:battery[.]runtime[.]low:(?:\s)(.*))`)
 	inputVoltageRegex           =   regexp.MustCompile(`(?:input[.]voltage:(?:\s)(.*))`)
 	inputVoltageNominalRegex    =   regexp.MustCompile(`(?:input[.]voltage[.]nominal:(?:\s)(.*))`)
 	outputVoltageRegex          =   regexp.MustCompile(`(?:output[.]voltage:(?:\s)(.*))`)
@@ -31,10 +33,13 @@ var(
 	upsLoadRegex                =   regexp.MustCompile(`(?:ups[.]load:(?:\s)(.*))`)
 	upsStatusRegex              =   regexp.MustCompile(`(?:ups[.]status:(?:\s)(.*))`)
 
+
 	batteryCharge = prometheus.NewGauge(prometheus.GaugeOpts{})
 	batteryPacks= prometheus.NewGauge(prometheus.GaugeOpts{})
 	batteryVoltage= prometheus.NewGauge(prometheus.GaugeOpts{})
 	batteryVoltageNominal= prometheus.NewGauge(prometheus.GaugeOpts{})
+	batteryRuntime= prometheus.NewGauge(prometheus.GaugeOpts{})
+	batteryRuntimeLow= prometheus.NewGauge(prometheus.GaugeOpts{})
 	inputVoltage = prometheus.NewGauge(prometheus.GaugeOpts{})
 	inputVoltageNominal = prometheus.NewGauge(prometheus.GaugeOpts{})
 	outputVoltage = prometheus.NewGauge(prometheus.GaugeOpts{})
@@ -74,7 +79,16 @@ func initMetrics( upsArg string) {
 		Help: "Nominal battery voltage",
 		ConstLabels: constLabels,
 	})
-
+	batteryRuntime = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "battery_runtime",
+		Help: "Battery runtime",
+		ConstLabels: constLabels,
+	})
+	batteryRuntimeLow = prometheus.NewGauge(prometheus.GaugeOpts{
+		Name: "battery_runtime_low",
+		Help: "Battery runtime low",
+		ConstLabels: constLabels,
+	})
 	inputVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "input_voltage",
 		Help: "Current input voltage",
@@ -130,6 +144,8 @@ func recordMetrics(){
 	prometheus.MustRegister(batteryPacks)
 	prometheus.MustRegister(batteryVoltage)
 	prometheus.MustRegister(batteryVoltageNominal)
+	prometheus.MustRegister(batteryRuntime)
+	prometheus.MustRegister(batteryRuntimeLow)
 	prometheus.MustRegister(inputVoltage)
 	prometheus.MustRegister(inputVoltageNominal)
 	prometheus.MustRegister(outputVoltage)
@@ -174,6 +190,20 @@ func sampleMetrics(upscBinary string, upsArg string) {
 			} else {
 				batteryVoltageNominalValue, _ := strconv.ParseFloat(batteryVoltageNominalRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
 				batteryVoltageNominal.Set(batteryVoltageNominalValue)
+			}
+			if batteryRuntimeRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(batteryRuntime)
+			} else {
+				batteryRuntimeValue, _ := strconv.ParseFloat(batteryRuntimeRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				batteryRuntime.Set(batteryRuntimeValue)
+			}
+
+
+			if batteryRuntimeLowRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
+				prometheus.Unregister(batteryRuntimeLow)
+			} else {
+				batteryRuntimeLowValue, _ := strconv.ParseFloat(batteryRuntimeLowRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
+				batteryRuntime.Set(batteryRuntimeLowValue)
 			}
 
 			if inputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
