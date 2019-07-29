@@ -7,3 +7,4 @@ go:
 
 before_install:
   - go get github.com/golang/dep
+  - export PATH=$PATH:$HOME/gopath/bin
