@@ -203,7 +203,7 @@ func sampleMetrics(upscBinary string, upsArg string) {
 				prometheus.Unregister(batteryRuntimeLow)
 			} else {
 				batteryRuntimeLowValue, _ := strconv.ParseFloat(batteryRuntimeLowRegex.FindAllStringSubmatch(string(upsOutput), -1)[0][1], 64)
-				batteryRuntime.Set(batteryRuntimeLowValue)
+				batteryRuntimeLow.Set(batteryRuntimeLowValue)
 			}
 
 			if inputVoltageRegex.FindAllStringSubmatch(string(upsOutput), -1) == nil {
