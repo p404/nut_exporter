@@ -23,5 +23,11 @@ notifications:
 before_install:
   - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
   - chmod +x $GOPATH/bin/dep
-  - go get github.com/golang/lint/golint                        # Linter
+  - go get golang.org/x/lint/golint                             # Linter
   - go get honnef.co/go/tools/cmd/megacheck                     # Badass static analyzer/linter
+
+script:
+  - make
+  - go vet ./...
+  - megacheck ./...
+  - golint -set_exit_status $(go list ./...) # one last linter
